@@ -37,6 +37,7 @@ namespace TestProject
 				"10.12.2023",
 				"ab.cd.df",
 				"Hello"
+				"2023/12/11"
 
 			};
 			for (int i = 0; i < Cases.size(); i++)
