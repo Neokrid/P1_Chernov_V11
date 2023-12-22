@@ -16,7 +16,9 @@ Date::Date(int day, int month, int year)
     , month(month)
     , year(year)
 {
-    // 
+    if (!IsValidDate()) {
+        throw std::runtime_error("Некорректная дата");
+    }
 }
 
 void Date::SetYear(const int year) {
@@ -82,13 +84,14 @@ void Date::create_from_stream(std::istream& stream) {
 bool Date::ValidateDate(const std::string& date) {
     std::istringstream in(date);
     int year, month, day;
-    char point;
-    if (!(in >> year >> point >> month >> point >> day)) {
+    char point1, point2;
+
+    if (!(in >> year >> point1 >> month >> point2 >> day)) {
         throw std::runtime_error("Неверный формат даты");
         return false;
     }
 
-    if (point != '.') {
+    if (point1 != '.' || point2 != '.') {
         throw std::runtime_error("Неверный разделитель даты. Используйте точку.");
         return false;
     }
@@ -130,4 +133,28 @@ void Date::InvalidDate(const std::string& date)
     if (date.empty() || !ValidateDate(date)) {
         throw std::runtime_error("Неправильное Время!");
     }
+}
+
+bool Date::IsValidDate() const {
+    if (month < 1 || month > 12 || day < 1 || day > 31 || year > 2023) {
+        return false;
+    }
+
+    if (((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) && month == 2 && day > 29) {
+        return false;
+    }
+
+    if (((year % 4 != 0 || year % 100 == 0) && year % 400 != 0) && month == 2 && day > 28) {
+        return false;
+    }
+
+    if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31) {
+        return false;
+    }
+
+    if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+        return false;
+    }
+
+    return true;
 }
