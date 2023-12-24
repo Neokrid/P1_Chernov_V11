@@ -1,0 +1,56 @@
+@startuml
+
+class Date {
+    - day: int
+    - month: int
+    - year: int
+
+    + Date()
+    + Date(day: int, month: int, year: int)
+    + SetYear(year: int): void
+    + GetYear(): int
+    + SetMonth(month: int): void
+    + GetMonth(): int
+    + SetDay(day: int): void
+    + GetDay(): int
+    + print(out: std::ostream&): void
+    + create_from_stream(stream: std::istream&): void
+    + ValidateDate(date: std::string): bool
+    + InvalidDate(date: std::string): void
+
+    - IsValidDate(): bool
+}
+
+class FileReader {
+    + readStudentTopics(in: std::ifstream&): std::vector<StudentTopic>
+}
+
+class Printer {
+    + printStudentTopics(objects: std::vector<StudentTopic>): void
+}
+
+class StudentTopic {
+    - studentName: std::string
+    - topicName: std::string
+    - issueDate: Date
+
+    + StudentTopic(name: std::string, topic: std::string, date: Date)
+    + StudentTopic()
+    + SetName(name: std::string): void
+    + GetName(): std::string
+    + SetDate(date: Date): void
+    + GetDate(): Date
+    + SetTopic(topic: std::string): void
+    + GetTopic(): std::string
+    + read(in: std::istream&): void
+    + print(out: std::ostream = std::cout): void
+    + ValidateName(name: std::string): bool
+    + InvalidName(name: std::string): void
+    + ValidateTopicName(topic_name: std::string): bool
+    + InvalidTopicName(topic_name: std::string): void
+}
+
+Date *-- StudentTopic
+
+
+@enduml
