@@ -1,11 +1,16 @@
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
 #include <iostream>
 #include <fstream>
 #include "file_reader.h"
 #include "printer.h"
-using namespace std;
 
 int main() {
     setlocale(LC_ALL, "Ru");
+
+    // Включаем утечки памяти
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
     try {
         std::ifstream in("input.txt");
@@ -16,6 +21,9 @@ int main() {
         cerr << "Ошибка: " << ex.what() << endl;
         return 1;
     }
+
+    // Выводим информацию об утечках памяти
+    _CrtDumpMemoryLeaks();
 
     return 0;
 }

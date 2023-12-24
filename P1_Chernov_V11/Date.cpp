@@ -21,11 +21,11 @@ Date::Date(int day, int month, int year)
     }
 }
 
-void Date::SetYear(const int year) {
-    if (year < 0 || year > 2023) {
+void Date::SetYear(const int newYear) {
+    if (newYear < 0 || newYear > 2023) {
         throw std::runtime_error("Некорректное значение года");
     }
-    this->year = year;
+    this->year = newYear;
 }
 
 int Date::GetYear() const
@@ -33,11 +33,11 @@ int Date::GetYear() const
     return year;
 }
 
-void Date::SetMonth(const int month) {
-    if (month < 1 || month > 12) {
+void Date::SetMonth(const int newMonth) {
+    if (newMonth < 1 || newMonth > 12) {
         throw std::runtime_error("Некорректное значение месяца");
     }
-    this->month = month;
+    this->month = newMonth;
 }
 
 int Date::GetMonth() const
@@ -45,11 +45,11 @@ int Date::GetMonth() const
     return month;
 }
 
-void Date::SetDay(const int day) {
-    if (day < 1 || day > 31) {
+void Date::SetDay(const int newday) {
+    if (newday < 1 || newday > 31) {
         throw std::runtime_error("Некорректное значение дня");
     }
-    this->day = day;
+    this->day = newday;
 }
 
 int Date::GetDay() const
@@ -66,9 +66,9 @@ void Date::print(std::ostream& out) const {
 }
 
 void Date::create_from_stream(std::istream& stream) {
-    int year, month, day;
+    int locyear, locmonth, locday;
     char point;
-    if (!(stream >> year >> point >> month >> point >> day)) {
+    if (!(stream >> locyear >> point >> locmonth >> point >> locday)) {
         throw std::runtime_error("Неверный формат даты");
     }
 
@@ -76,9 +76,9 @@ void Date::create_from_stream(std::istream& stream) {
         throw std::runtime_error("Неверный разделитель даты. Используйте точку.");
     }
 
-    this->SetYear(year);
-    this->SetMonth(month);
-    this->SetDay(day);
+    this->SetYear(locyear);
+    this->SetMonth(locmonth);
+    this->SetDay(locday);
 }
 
 bool Date::ValidateDate(const std::string& date) {
@@ -113,7 +113,7 @@ bool Date::ValidateDate(const std::string& date) {
         return false;
     }
 
-    if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31)
+    if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
     {
         throw std::runtime_error("v month ne > 31 day");
         return false;
@@ -136,23 +136,28 @@ void Date::InvalidDate(const std::string& date)
 }
 
 bool Date::IsValidDate() const {
-    if (month < 1 || month > 12 || day < 1 || day > 31 || year > 2023) {
-        return false;
-    }
-
-    if (((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) && month == 2 && day > 29) {
-        return false;
-    }
-
-    if (((year % 4 != 0 || year % 100 == 0) && year % 400 != 0) && month == 2 && day > 28) {
-        return false;
-    }
-
-    if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31) {
+    if (month < 1 || month > 12 || year < 0 || year > 2023) {
         return false;
     }
 
     if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+        return false;
+    }
+
+    if (day < 1) {
+        return false;
+    }
+
+    if (month == 2) {
+        if (((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) && day > 29) {
+            return false;
+        }
+
+        if (((year % 4 != 0 || year % 100 == 0) && year % 400 != 0) && day > 28) {
+            return false;
+        }
+    }
+    else if (day > 31) {
         return false;
     }
 
