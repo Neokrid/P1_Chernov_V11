@@ -24,6 +24,8 @@ public:
     static bool ValidateDate(const std::string& date);
     static void InvalidDate(const std::string& date);
 
+    int GetMaxDaysInMonth() const;  // Добавляем объявление функции
+
 private:
     int day;
     int month;

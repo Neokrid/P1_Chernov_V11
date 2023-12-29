@@ -1,21 +1,14 @@
-#pragma once
-
+// date.cpp
 #include "Date.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 
 Date::Date()
-    : day(0)
-    , month(0)
-    , year(0)
-{}
+    : day(0), month(0), year(0) {}
 
 Date::Date(int day, int month, int year)
-    : day(day)
-    , month(month)
-    , year(year)
-{
+    : day(day), month(month), year(year) {
     if (!IsValidDate()) {
         throw std::runtime_error("Некорректная дата");
     }
@@ -28,8 +21,7 @@ void Date::SetYear(const int newYear) {
     this->year = newYear;
 }
 
-int Date::GetYear() const
-{
+int Date::GetYear() const {
     return year;
 }
 
@@ -40,20 +32,25 @@ void Date::SetMonth(const int newMonth) {
     this->month = newMonth;
 }
 
-int Date::GetMonth() const
-{
+int Date::GetMonth() const {
     return month;
 }
 
 void Date::SetDay(const int newday) {
-    if (newday < 1 || newday > 31) {
+    if (newday < 1) {
         throw std::runtime_error("Некорректное значение дня");
     }
+
+    int maxDaysInMonth = GetMaxDaysInMonth();
+
+    if (newday > maxDaysInMonth) {
+        throw std::runtime_error("Некорректное значение дня");
+    }
+
     this->day = newday;
 }
 
-int Date::GetDay() const
-{
+int Date::GetDay() const {
     return day;
 }
 
@@ -103,35 +100,36 @@ bool Date::ValidateDate(const std::string& date) {
 
     if (((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) && month == 2 && day > 29)
     {
-        throw std::runtime_error("date is visokosniy god, Feb day !>29");
+        throw std::runtime_error("date is високосный год, Feb day > 29");
         return false;
     }
 
     if (((year % 4 != 0 || year % 100 == 0) && year % 400 != 0) && month == 2 && day > 28)
     {
-        throw std::runtime_error("date is ne visokosniy god, Feb day !>28");
+        throw std::runtime_error("date is не високосный год, Feb day > 28");
         return false;
     }
 
     if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
     {
-        throw std::runtime_error("v month ne > 31 day");
-        return false;
+        if (day > 31) {
+            throw std::runtime_error("в месяце не может быть более 31 дня");
+            return false;
+        }
     }
 
     if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)
     {
-        throw std::runtime_error("v month ne > 30 day");
+        throw std::runtime_error("в месяце не может быть более 30 дней");
         return false;
     }
     return true;
 }
 
-
 void Date::InvalidDate(const std::string& date)
 {
     if (date.empty() || !ValidateDate(date)) {
-        throw std::runtime_error("Неправильное Время!");
+        throw std::runtime_error("Неправильная дата!");
     }
 }
 
@@ -140,26 +138,30 @@ bool Date::IsValidDate() const {
         return false;
     }
 
-    if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
-        return false;
-    }
+    int maxDaysInMonth = GetMaxDaysInMonth();
 
-    if (day < 1) {
-        return false;
-    }
-
-    if (month == 2) {
-        if (((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) && day > 29) {
-            return false;
-        }
-
-        if (((year % 4 != 0 || year % 100 == 0) && year % 400 != 0) && day > 28) {
-            return false;
-        }
-    }
-    else if (day > 31) {
+    if (day < 1 || day > maxDaysInMonth) {
         return false;
     }
 
     return true;
+}
+
+int Date::GetMaxDaysInMonth() const {
+    switch (month) {
+    case 2:  // Февраль
+        if (((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) {
+            return 29;  // Високосный год
+        }
+        else {
+            return 28;  // Невисокосный год
+        }
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        return 30;  // Месяцы с 30 днями
+    default:
+        return 31;  // Месяцы с 31 днем
+    }
 }
